@@ -8,7 +8,7 @@
 
     - name: set intended config
       shell: cat /etc/configs/golden/{{inventory_hostname}}_golden.cfg
-      register: hostvars[inventory_hostname]['golden_config']
+      register: "{{ hostvars[inventory_hostname]['golden_config'] }}"
 
     - name: check the running-config against master config
       ios_config:
