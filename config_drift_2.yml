@@ -5,10 +5,14 @@
   gather_facts: no
 
   tasks:
+    - name: set intended config
+      shell: cat /etc/configs/golden/{{inventory_hostname}}_golden.cfg
+      register: golden_config
+
     - name: check the running-config against master config
       ios_config:
         diff_against: intended
-        intended_config: "/etc/configs/golden/{{inventory_hostname}}_golden.cfg"
+        intended_config: golden_config
       register: diff_against
 
     - name: Register golden to before variable
@@ -21,7 +25,7 @@
       set_fact: after="{{ diff_against['diff']['after'].split('\n') }}"
 
     - debug:
-        msh: "{{after}}"
+        msg: "{{after}}"
 
     - name: create line-to-line diff of running and golden configs
       set_fact: difference="{{ after | difference(before) }}"
