@@ -11,7 +11,7 @@
 
     - name: set intended config
       shell: cat /etc/configs/golden/{{inventory_hostname}}_golden.cfg
-      register: "{{ hostname.golden_config }}"
+      register: hostname.golden_config
 
     - name: check the running-config against master config
       ios_config:
