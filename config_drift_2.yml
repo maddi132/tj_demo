@@ -1,0 +1,33 @@
+---
+- name: Cisco Backup Config
+  hosts: "{{ host_group }}"
+  connection: network_cli
+  gather_facts: no
+
+  tasks:
+    - name: check the running-config against master config
+      ios_config:
+        diff_against: intended
+        intended_config: "/etc/configs/golden/{{inventory_hostname}}_golden.cfg"
+      register: diff_against
+
+    - name: Register golden to before variable
+      set_fact: before="{{ diff_against['diff']['before'].split('\n') }}"
+
+    - debug:
+        msg: "{{before}}"
+
+    - name: Register running config to after variable
+      set_fact: after="{{ diff_against['diff']['after'].split('\n') }}"
+
+    - debug:
+        msh: "{{after}}"
+
+    - name: create line-to-line diff of running and golden configs
+      set_fact: difference="{{ after | difference(before) }}"
+
+    - debug:
+        var: difference  
+
+    - debug:
+        msg: "{{diff_against}}"
