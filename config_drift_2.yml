@@ -5,18 +5,15 @@
   gather_facts: no
 
   tasks:
-    - name: create variable per host
-      set_fact:
-        hostname: "{{ inventory_hostname }}"
 
     - name: set intended config
       shell: cat /etc/configs/golden/{{inventory_hostname}}_golden.cfg
-      register: hostname.golden_config
+      register: hostvars[inventory_hostname]['golden_config']
 
     - name: check the running-config against master config
       ios_config:
         diff_against: intended
-        intended_config: "{{ hostname.golden_config.stdout_lines }}"
+        intended_config: "{{ hostvars[inventory_hostname]['golden_config'].stdout_lines }}"
       register: diff_against
 
     - name: Register golden to before variable
