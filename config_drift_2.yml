@@ -7,12 +7,12 @@
   tasks:
     - name: set intended config
       shell: cat /etc/configs/golden/{{inventory_hostname}}_golden.cfg
-      register: golden_config
+      register: "{{ inventory_hostname['golden_config'] }}"
 
     - name: check the running-config against master config
       ios_config:
         diff_against: intended
-        intended_config: "{{ golden_config.stdout_lines }}"
+        intended_config: "{{ inventory_hostname['golden_config'].stdout_lines }}"
       register: diff_against
 
     - name: Register golden to before variable
