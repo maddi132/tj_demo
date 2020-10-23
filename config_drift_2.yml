@@ -8,12 +8,12 @@
 
     - name: set intended config
       shell: cat /etc/configs/golden/{{inventory_hostname}}_golden.cfg
-      register: "{{ hostvars[inventory_hostname]['golden_config'] }}"
+      register: golden_config
 
     - name: check the running-config against master config
       ios_config:
         diff_against: intended
-        intended_config: "{{ hostvars[inventory_hostname]['golden_config'].stdout_lines }}"
+        intended_config: golden_config
       register: diff_against
 
     - name: Register golden to before variable
